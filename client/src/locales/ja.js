@@ -6,8 +6,16 @@ export default {
     orders: '注文',
     finance: '財務',
     demandForecast: '需要予測',
+    restocking: '補充発注',
     companyName: '触媒コンポーネンツ',
-    subtitle: '在庫管理システム'
+    subtitle: '在庫管理システム',
+    mainNavigation: 'メインナビゲーション',
+    skipToContent: 'メインコンテンツへ移動',
+    openMenu: 'ナビゲーションメニューを開く',
+    collapseSidebar: 'サイドバーを折りたたむ',
+    expandSidebar: 'サイドバーを展開する',
+    collapse: '折りたたむ',
+    expand: '展開'
   },
 
   // Dashboard
@@ -112,6 +120,24 @@ export default {
     onTimeDelivery: '定時配達',
     itemsCount: '{count}件',
     quantity: '数量',
+    submittedOrders: '発注済み注文',
+    submittedEmpty: '発注済みの補充注文はまだありません',
+    submittedTable: {
+      orderNumber: '発注番号',
+      submittedDate: '発注日',
+      expectedDelivery: '予定配達日',
+      leadTime: 'リードタイム（日）',
+      total: '合計',
+      status: 'ステータス',
+      items: '品目',
+      sku: 'SKU',
+      name: '名前',
+      quantity: '数量',
+      unitCost: '単価',
+      lineTotal: '小計',
+      supplier: '仕入先'
+    },
+    statusSubmitted: '発注済み',
     table: {
       orderNumber: '注文番号',
       orderId: '注文ID',
@@ -127,6 +153,32 @@ export default {
       expectedDelivery: '予定配達日',
       actualDelivery: '実際の配達日'
     }
+  },
+
+  // Restocking
+  restocking: {
+    title: '補充発注',
+    subtitle: '予測需要の増加に基づく推奨発注',
+    budgetLabel: '補充予算',
+    allocated: '割当額',
+    remaining: '残額',
+    recommendations: '推奨品目',
+    columns: {
+      sku: 'SKU',
+      name: '名前',
+      trend: 'トレンド',
+      quantity: '推奨数量',
+      unitCost: '単価',
+      lineTotal: '小計',
+      leadTime: 'リードタイム（日）',
+      supplier: '仕入先'
+    },
+    noRecommendations: '予算が小さすぎて推奨品目がありません。予算を増やしてください。',
+    placeOrder: '発注する',
+    submitting: '送信中...',
+    orderPlaced: '注文 {orderNumber} を発注しました。予定配達日: {deliveryDate}。',
+    errorSubmit: '発注に失敗しました',
+    errorLoad: '需要予測の読み込みに失敗しました'
   },
 
   // Finance/Spending
@@ -309,6 +361,25 @@ export default {
     english: 'English',
     japanese: '日本語',
     selectLanguage: '言語を選択'
+  },
+
+  // Purchase Order Modal (Dashboard backlog)
+  purchaseOrderModal: {
+    createTitle: '発注書の作成',
+    viewTitle: '発注書',
+    sku: 'SKU',
+    quantityNeeded: '必要数量',
+    quantityShort: '不足数量',
+    orderQuantity: '発注数量',
+    pricingHint: '単価とリードタイムはサーバーが設定します。',
+    submit: '発注書を作成',
+    orderNumber: '発注番号',
+    status: 'ステータス',
+    expectedDelivery: '予定配達日',
+    totalCost: '合計金額',
+    notFound: 'この品目の発注書が見つかりません',
+    errorQuantity: '数量は0より大きい整数で入力してください',
+    errorLoad: '発注書の読み込みに失敗しました'
   },
 
   // Common

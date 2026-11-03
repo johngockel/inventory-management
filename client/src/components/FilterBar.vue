@@ -106,14 +106,14 @@ export default {
   border-bottom: 1px solid #e2e8f0;
   padding: 0.75rem 0;
   position: sticky;
-  top: 70px;
+  top: 0; /* sticks inside the sticky .top-bar of the content column; old 70px was the removed header height */
   z-index: 90;
 }
 
 .filters-container {
-  max-width: 1600px;
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 var(--space-6);
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -122,6 +122,7 @@ export default {
 .filters-grid {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 1rem;
   flex: 1;
 }
