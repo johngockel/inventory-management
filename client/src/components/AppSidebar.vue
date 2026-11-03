@@ -23,8 +23,7 @@ const navItems = computed(() => [
   { path: '/spending', label: t('nav.finance'), icon: ['M10 2.5v15', 'M13.5 6c-.6-1-1.9-1.5-3.5-1.5-2 0-3.5 1-3.5 2.5s1.5 2.2 3.5 2.5 3.5 1 3.5 2.5-1.500 2.500-3.500 2.500c-1.600 0-2.900-.5-3.500-1.500'] },
   { path: '/demand', label: t('nav.demandForecast'), icon: ['M3 16l4-5 3 3 6-8', 'M12 6h4v4'] },
   { path: '/restocking', label: t('nav.restocking'), icon: ['M16 10a6 6 0 10-1.800 4.300', 'M16 4v4h-4'] },
-  // Literal on purpose: there is no nav.reports i18n key.
-  { path: '/reports', label: 'Reports', icon: ['M4 16V9', 'M10 16V4', 'M16 16v-5'] }
+  { path: '/reports', label: t('nav.reports'), icon: ['M4 16V9', 'M10 16V4', 'M16 16v-5'] }
 ])
 
 const isActive = (path) => route.path === path

@@ -7,6 +7,7 @@ export default {
     finance: '財務',
     demandForecast: '需要予測',
     restocking: '補充発注',
+    reports: 'レポート',
     companyName: '触媒コンポーネンツ',
     subtitle: '在庫管理システム',
     mainNavigation: 'メインナビゲーション',
@@ -179,6 +180,38 @@ export default {
     orderPlaced: '注文 {orderNumber} を発注しました。予定配達日: {deliveryDate}。',
     errorSubmit: '発注に失敗しました',
     errorLoad: '需要予測の読み込みに失敗しました'
+  },
+
+  // Reports
+  reports: {
+    title: 'パフォーマンスレポート',
+    description: '四半期ごとのパフォーマンス指標と月次の推移を表示します',
+    loading: 'レポートを読み込み中...',
+    errorLoad: 'レポートの読み込みに失敗しました',
+    quarterly: {
+      title: '四半期別パフォーマンス',
+      quarter: '四半期',
+      totalOrders: '総注文数',
+      totalRevenue: '総売上',
+      avgOrderValue: '平均注文金額',
+      fulfillmentRate: '出荷完了率'
+    },
+    monthly: {
+      title: '月別売上推移',
+      analysisTitle: '前月比分析',
+      month: '月',
+      orders: '注文数',
+      revenue: '売上',
+      change: '変動',
+      growthRate: '成長率'
+    },
+    summary: {
+      totalRevenueYtd: '総売上（年初来）',
+      avgMonthlyRevenue: '月平均売上',
+      totalOrdersYtd: '総注文数（年初来）',
+      bestQuarter: '最も好調な四半期'
+    },
+    noData: '選択したフィルターに該当するレポートデータがありません'
   },
 
   // Finance/Spending

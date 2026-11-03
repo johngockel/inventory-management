@@ -38,6 +38,26 @@ export const api = {
     return response.data
   },
 
+  async getQuarterlyReports(filters = {}) {
+    const response = await axios.get(`${API_BASE_URL}/reports/quarterly?${this._reportParams(filters)}`)
+    return response.data
+  },
+
+  async getMonthlyTrends(filters = {}) {
+    const response = await axios.get(`${API_BASE_URL}/reports/monthly-trends?${this._reportParams(filters)}`)
+    return response.data
+  },
+
+  // Shared query-string builder for report endpoints (same filters as orders)
+  _reportParams(filters = {}) {
+    const params = new URLSearchParams()
+    if (filters.warehouse && filters.warehouse !== 'all') params.append('warehouse', filters.warehouse)
+    if (filters.category && filters.category !== 'all') params.append('category', filters.category)
+    if (filters.status && filters.status !== 'all') params.append('status', filters.status)
+    if (filters.month && filters.month !== 'all') params.append('month', filters.month)
+    return params.toString()
+  },
+
   async getBacklog() {
     const response = await axios.get(`${API_BASE_URL}/backlog`)
     return response.data
