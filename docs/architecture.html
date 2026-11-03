@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Architektur - Inventory Management</title>
+  <style>
+    :root {
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --panel: #f8fafc;
+      --surface: #ffffff;
+      --accent: #334155;
+      --blue: #2563eb;
+      --green: #16a34a;
+      --yellow: #ca8a04;
+      --red: #dc2626;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --ink: #e2e8f0;
+        --muted: #94a3b8;
+        --line: #334155;
+        --panel: #1e293b;
+        --surface: #0f172a;
+        --accent: #cbd5e1;
+      }
+    }
+    :root[data-theme="dark"] {
+      --ink: #e2e8f0;
+      --muted: #94a3b8;
+      --line: #334155;
+      --panel: #1e293b;
+      --surface: #0f172a;
+      --accent: #cbd5e1;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--surface);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.55;
+    }
+    main { max-width: 1040px; margin: 0 auto; padding: 40px 16px 64px; }
+    header { border-bottom: 1px solid var(--line); padding-bottom: 24px; margin-bottom: 8px; }
+    h1 { font-size: 28px; margin: 0 0 8px; }
+    h2 { font-size: 20px; margin: 48px 0 12px; }
+    h3 { font-size: 15px; margin: 0 0 6px; }
+    p { margin: 0 0 12px; }
+    .lead { color: var(--muted); font-size: 16px; margin: 0; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; background: var(--panel); padding: 1px 6px; border-radius: 4px; border: 1px solid var(--line); }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 8px; }
+    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+
+    /* Architecture diagram */
+    .diagram { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: stretch; gap: 12px; margin-top: 8px; }
+    .box { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 16px; }
+    .box .port { font-size: 12px; color: var(--muted); margin-top: 6px; }
+    .box ul { margin: 8px 0 0; padding-left: 18px; font-size: 14px; color: var(--muted); }
+    .arrow { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--muted); font-size: 12px; min-width: 64px; text-align: center; }
+    .arrow span { font-size: 22px; line-height: 1; }
+    .db-note { margin-top: 16px; font-size: 14px; color: var(--muted); }
+
+    /* Data flow steps */
+    .steps { counter-reset: step; list-style: none; padding: 0; margin: 0; }
+    .steps li { counter-increment: step; position: relative; padding: 12px 12px 12px 48px; border-bottom: 1px solid var(--line); font-size: 14px; }
+    .steps li::before { content: counter(step); position: absolute; left: 12px; top: 12px; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: var(--surface); font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+
+    /* Status badges */
+    .badge { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px; border: 1px solid; }
+    .badge.ok { color: var(--green); border-color: var(--green); }
+    .badge.warn { color: var(--yellow); border-color: var(--yellow); }
+    .badge.err { color: var(--red); border-color: var(--red); }
+
+    .card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 16px; margin-top: 12px; }
+    .issue { border-left: 3px solid var(--red); }
+    .table-wrap { overflow-x: auto; }
+
+    @media (max-width: 760px) {
+      .diagram { grid-template-columns: 1fr; }
+      .arrow { flex-direction: row; min-width: 0; padding: 4px 0; }
+      .arrow span { transform: rotate(90deg); }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Architektur: Factory Inventory Management</h1>
+    <p class="lead">Full-Stack-Demo mit Vue 3 im Frontend, FastAPI im Backend und In-Memory-Daten aus JSON-Dateien. Es gibt keine Datenbank.</p>
+  </header>
+
+  <h2>1. Systemarchitektur</h2>
+  <div class="diagram">
+    <div class="box">
+      <h3>Browser / Frontend</h3>
+      <div class="port">Vue 3 SPA, Vite Dev-Server, Port 3000</div>
+      <ul>
+        <li>Vue Router (History-Modus)</li>
+        <li>Views pro Seite</li>
+        <li>Axios-Client in <code>api.js</code></li>
+      </ul>
+    </div>
+    <div class="arrow"><span>&rarr;</span>HTTP/JSON<br>GET, POST, PATCH, DELETE</div>
+    <div class="box">
+      <h3>Backend / API</h3>
+      <div class="port">FastAPI, Uvicorn, Port 8001</div>
+      <ul>
+        <li>Routen unter <code>/api/*</code></li>
+        <li>Pydantic-Modelle für Antworten</li>
+        <li>Filterung in Python, CORS offen</li>
+      </ul>
+    </div>
+    <div class="arrow"><span>&rarr;</span>Laden beim Start</div>
+    <div class="box">
+      <h3>Daten</h3>
+      <div class="port">server/data/*.json</div>
+      <ul>
+        <li><code>mock_data.py</code> lädt alle Dateien</li>
+        <li>Daten liegen im Speicher</li>
+        <li>Änderungen gehen beim Neustart verloren</li>
+      </ul>
+    </div>
+  </div>
+  <p class="db-note">Die Vue-Anwendung spricht direkt mit der API auf <code>http://localhost:8001/api</code>. Es gibt keinen Proxy und keine Authentifizierung.</p>
+
+  <h2>2. Tech-Stack</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Schicht</th><th>Technologie</th><th>Version / Hinweis</th><th>Zweck</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Frontend</td><td>Vue 3 (Composition API)</td><td>^3.4.21</td><td>UI-Komponenten und Reaktivität</td></tr>
+        <tr><td>Frontend</td><td>Vue Router</td><td>^4.3.0</td><td>Seitennavigation (6 Routen)</td></tr>
+        <tr><td>Frontend</td><td>Vite</td><td>^8.0.0, Port 3000</td><td>Dev-Server und Build</td></tr>
+        <tr><td>Frontend</td><td>@vitejs/plugin-vue</td><td>^6.0.0</td><td>Einbindung von .vue-Dateien</td></tr>
+        <tr><td>Frontend</td><td>Axios</td><td>^1.6.7</td><td>HTTP-Aufrufe an die API</td></tr>
+        <tr><td>Frontend</td><td>Eigene i18n</td><td>en und ja</td><td>Sprache in <code>localStorage</code> gespeichert</td></tr>
+        <tr><td>Backend</td><td>Python FastAPI</td><td>&gt;= 0.110.0</td><td>REST-API mit automatischer Doku unter <code>/docs</code></td></tr>
+        <tr><td>Backend</td><td>Uvicorn</td><td>&gt;= 0.24.0</td><td>ASGI-Server, Port 8001</td></tr>
+        <tr><td>Backend</td><td>Pydantic</td><td>&gt;= 2.5.0</td><td>Validierung und Antwortmodelle</td></tr>
+        <tr><td>Tests</td><td>pytest, httpx, pytest-asyncio</td><td>Ordner <code>tests/backend</code></td><td>API-Tests mit FastAPI TestClient</td></tr>
+        <tr><td>Tooling</td><td>uv</td><td>Python-Paketmanager</td><td>Start mit <code>uv run python main.py</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>3. Datenfluss</h2>
+  <ol class="steps">
+    <li>Der Benutzer ändert einen Filter in der <code>FilterBar</code> oder wählt einen Zeitraum. Der Zustand liegt in <code>useFilters.js</code>.</li>
+    <li>Eine View oder <code>App.vue</code> ruft eine Methode in <code>api.js</code> auf. Leere Filterwerte (<code>all</code>) werden dort nicht als Query-Parameter gesendet.</li>
+    <li>Axios sendet eine GET-Anfrage an <code>/api/...</code> auf Port 8001.</li>
+    <li>FastAPI nimmt die Query-Parameter entgegen. Die Funktionen <code>apply_filters</code> und <code>filter_by_month</code> filtern die In-Memory-Listen auf Kopien.</li>
+    <li>Pydantic validiert die Antwort gegen das <code>response_model</code>.</li>
+    <li>Die Antwort wird in <code>ref</code>-Variablen gespeichert, zum Beispiel <code>allOrders</code> oder <code>inventoryItems</code>.</li>
+    <li>Abgeleitete Werte wie Kennzahlen, Diagramme und Tabellen sind <code>computed</code>-Properties. Sie aktualisieren sich automatisch, wenn sich Filter oder Rohdaten ändern.</li>
+  </ol>
+
+  <h2>4. Frontend-Seiten</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Route</th><th>View-Datei</th><th>Genutzte API-Endpunkte</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>/</code></td><td><code>Dashboard.vue</code></td><td><code>/api/dashboard/summary</code>, <code>/api/backlog</code>, <code>/api/purchase-orders</code></td></tr>
+        <tr><td><code>/inventory</code></td><td><code>Inventory.vue</code></td><td><code>/api/inventory</code></td></tr>
+        <tr><td><code>/orders</code></td><td><code>Orders.vue</code></td><td><code>/api/orders</code></td></tr>
+        <tr><td><code>/demand</code></td><td><code>Demand.vue</code></td><td><code>/api/demand</code></td></tr>
+        <tr><td><code>/spending</code></td><td><code>Spending.vue</code></td><td><code>/api/spending/*</code></td></tr>
+        <tr><td><code>/reports</code></td><td><code>Reports.vue</code></td><td><code>/api/reports/quarterly</code>, <code>/api/reports/monthly-trends</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Global in <code>App.vue</code>: Navigation, Profilmenü, Profil-Details und das Aufgaben-Modal (<code>TasksModal.vue</code>). Die Detail-Modals (Produkt, Inventar, Backlog, Kosten) liegen unter <code>components/</code>.</p>
+
+  <h2>5. Backend-Endpunkte</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Methode</th><th>Pfad</th><th>Filter</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>GET</td><td><code>/api/inventory</code></td><td>warehouse, category</td><td><span class="badge ok">OK</span></td></tr>
+        <tr><td>GET</td><td><code>/api/inventory/{item_id}</code></td><td>-</td><td><span class="badge ok">OK</span></td></tr>
+        <tr><td>GET</td><td><code>/api/orders</code></td><td>warehouse, category, status, month</td><td><span class="badge ok">OK</span></td></tr>
+        <tr><td>GET</td><td><code>/api/orders/{order_id}</code></td><td>-</td><td><span class="badge ok">OK</span></td></tr>
+        <tr><td>GET</td><td><code>/api/demand</code></td><td>-</td><td><span class="badge ok">OK</span></td></tr>
+        <tr><td>GET</td><td><code>/api/backlog</code></td><td>-</td><td><span class="badge ok">OK</span></td></tr>
+        <tr><td>GET</td><td><code>/api/dashboard/summary</code></td><td>warehouse, category, status, month</td><td><span class="badge ok">OK</span></td></tr>
+        <tr><td>GET</td><td><code>/api/spending/summary</code>, <code>/monthly</code>, <code>/categories</code>, <code>/transactions</code></td><td>-</td><td><span class="badge ok">OK</span></td></tr>
+        <tr><td>GET</td><td><code>/api/reports/quarterly</code>, <code>/api/reports/monthly-trends</code></td><td>-</td><td><span class="badge ok">OK</span></td></tr>
+        <tr><td>GET</td><td><code>/api/tasks</code></td><td>-</td><td><span class="badge err">404</span></td></tr>
+        <tr><td>POST, PATCH, DELETE</td><td><code>/api/tasks</code>, <code>/api/tasks/{id}</code></td><td>-</td><td><span class="badge err">Fehlt</span></td></tr>
+        <tr><td>GET, POST</td><td><code>/api/purchase-orders</code>, <code>/api/purchase-orders/{backlog_item_id}</code></td><td>-</td><td><span class="badge err">404</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card issue">
+    <h3>Bekanntes Problem: fehlende Endpunkte</h3>
+    <p>Das Frontend ruft in <code>api.js</code> die Pfade <code>/api/tasks</code> (GET, POST, PATCH, DELETE) und <code>/api/purchase-orders</code> (GET, POST) auf. Diese Routen existieren in <code>server/main.py</code> nicht. Der laufende Server antwortet darauf mit HTTP 404.</p>
+    <p>Betroffen sind das Aufgaben-Modal (<code>TasksModal.vue</code>) und die Erstellung von Bestellungen aus dem Backlog im Dashboard. Diese Funktionen können nicht korrekt arbeiten, bis die Endpunkte im Backend ergänzt werden.</p>
+  </div>
+
+  <h2>6. Projektstruktur</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Pfad</th><th>Inhalt</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>client/src/main.js</code></td><td>Einstieg, Router-Konfiguration</td></tr>
+        <tr><td><code>client/src/App.vue</code></td><td>Layout, Navigation, globale Modals, Styles</td></tr>
+        <tr><td><code>client/src/api.js</code></td><td>Zentrale API-Schicht (Axios)</td></tr>
+        <tr><td><code>client/src/composables/</code></td><td><code>useFilters</code>, <code>useAuth</code>, <code>useI18n</code></td></tr>
+        <tr><td><code>client/src/locales/</code></td><td>Übersetzungen <code>en.js</code> und <code>ja.js</code></td></tr>
+        <tr><td><code>client/src/utils/</code></td><td>Hilfsfunktionen, zum Beispiel Währung</td></tr>
+        <tr><td><code>server/main.py</code></td><td>Routen, Modelle, Filterlogik, CORS</td></tr>
+        <tr><td><code>server/mock_data.py</code></td><td>Lädt die JSON-Dateien beim Start</td></tr>
+        <tr><td><code>server/data/</code></td><td>Inventory, Orders, Demand, Backlog, Spending, Transaktionen, Purchase Orders</td></tr>
+        <tr><td><code>server/generate_data.py</code></td><td>Erzeugt die Beispieldaten</td></tr>
+        <tr><td><code>tests/backend/</code></td><td>pytest-Tests für die API</td></tr>
+        <tr><td><code>scripts/</code></td><td>Start- und Stop-Skripte</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>7. Entwicklung starten</h2>
+  <div class="card">
+    <p><strong>Backend:</strong> <code>cd server && uv run python main.py</code> (API-Doku: http://localhost:8001/docs)</p>
+    <p><strong>Frontend:</strong> <code>cd client && npm install && npm run dev</code> (http://localhost:3000)</p>
+  </div>
+</main>
+</body>
+</html>

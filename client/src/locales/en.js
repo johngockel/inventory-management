@@ -6,8 +6,16 @@ export default {
     orders: 'Orders',
     finance: 'Finance',
     demandForecast: 'Demand Forecast',
+    restocking: 'Restocking',
     companyName: 'Catalyst Components',
-    subtitle: 'Inventory Management System'
+    subtitle: 'Inventory Management System',
+    mainNavigation: 'Main navigation',
+    skipToContent: 'Skip to content',
+    openMenu: 'Open navigation menu',
+    collapseSidebar: 'Collapse sidebar',
+    expandSidebar: 'Expand sidebar',
+    collapse: 'Collapse',
+    expand: 'Expand'
   },
 
   // Dashboard
@@ -112,6 +120,24 @@ export default {
     onTimeDelivery: 'On-Time Delivery',
     itemsCount: '{count} items',
     quantity: 'Qty',
+    submittedOrders: 'Submitted Orders',
+    submittedEmpty: 'No restocking orders have been submitted yet',
+    submittedTable: {
+      orderNumber: 'PO Number',
+      submittedDate: 'Submitted',
+      expectedDelivery: 'Expected Delivery',
+      leadTime: 'Lead Time (Days)',
+      total: 'Total',
+      status: 'Status',
+      items: 'Items',
+      sku: 'SKU',
+      name: 'Name',
+      quantity: 'Qty',
+      unitCost: 'Unit Cost',
+      lineTotal: 'Line Total',
+      supplier: 'Supplier'
+    },
+    statusSubmitted: 'Submitted',
     table: {
       orderNumber: 'Order Number',
       orderId: 'Order ID',
@@ -127,6 +153,32 @@ export default {
       expectedDelivery: 'Expected Delivery',
       actualDelivery: 'Actual Delivery'
     }
+  },
+
+  // Restocking
+  restocking: {
+    title: 'Restocking',
+    subtitle: 'Recommended purchase orders based on forecasted demand growth',
+    budgetLabel: 'Restocking Budget',
+    allocated: 'Allocated',
+    remaining: 'Remaining',
+    recommendations: 'Recommended Items',
+    columns: {
+      sku: 'SKU',
+      name: 'Name',
+      trend: 'Trend',
+      quantity: 'Recommended Qty',
+      unitCost: 'Unit Cost',
+      lineTotal: 'Line Total',
+      leadTime: 'Lead Time (Days)',
+      supplier: 'Supplier'
+    },
+    noRecommendations: 'The budget is too small for any recommended item. Increase the budget to see recommendations.',
+    placeOrder: 'Place Order',
+    submitting: 'Submitting...',
+    orderPlaced: 'Order {orderNumber} placed. Expected delivery: {deliveryDate}.',
+    errorSubmit: 'Failed to place order',
+    errorLoad: 'Failed to load demand forecasts'
   },
 
   // Finance/Spending
@@ -309,6 +361,25 @@ export default {
     english: 'English',
     japanese: 'Japanese',
     selectLanguage: 'Select Language'
+  },
+
+  // Purchase Order Modal (Dashboard backlog)
+  purchaseOrderModal: {
+    createTitle: 'Create Purchase Order',
+    viewTitle: 'Purchase Order',
+    sku: 'SKU',
+    quantityNeeded: 'Quantity Needed',
+    quantityShort: 'Quantity Short',
+    orderQuantity: 'Order Quantity',
+    pricingHint: 'Unit cost and lead time are set by the server.',
+    submit: 'Create Purchase Order',
+    orderNumber: 'PO Number',
+    status: 'Status',
+    expectedDelivery: 'Expected Delivery',
+    totalCost: 'Total Cost',
+    notFound: 'No purchase order found for this item',
+    errorQuantity: 'Quantity must be a whole number greater than 0',
+    errorLoad: 'Failed to load purchase order'
   },
 
   // Common

@@ -75,6 +75,60 @@
         </div>
       </div>
     </div>
+
+    <div class="card submitted-orders">
+      <div class="card-header">
+        <h3 class="card-title">{{ t('orders.submittedOrders') }} ({{ purchaseOrders.length }})</h3>
+      </div>
+      <div v-if="poLoading" class="loading">{{ t('common.loading') }}</div>
+      <div v-else-if="poError" class="error">{{ poError }}</div>
+      <div v-else-if="purchaseOrders.length === 0" class="po-empty">{{ t('orders.submittedEmpty') }}</div>
+      <div v-else class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>{{ t('orders.submittedTable.orderNumber') }}</th>
+              <th>{{ t('orders.submittedTable.submittedDate') }}</th>
+              <th>{{ t('orders.submittedTable.expectedDelivery') }}</th>
+              <th>{{ t('orders.submittedTable.leadTime') }}</th>
+              <th>{{ t('orders.submittedTable.total') }}</th>
+              <th>{{ t('orders.submittedTable.status') }}</th>
+              <th>{{ t('orders.submittedTable.items') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="po in purchaseOrders" :key="po.order_number">
+              <td><strong>{{ po.order_number }}</strong></td>
+              <td>{{ formatDate(po.submitted_date) }}</td>
+              <td>{{ formatDate(po.expected_delivery_date) }}</td>
+              <td>{{ po.lead_time_days }}</td>
+              <td><strong>{{ formatMoney(po.total_cost) }}</strong></td>
+              <td>
+                <span class="badge info">{{ t('orders.statusSubmitted') }}</span>
+              </td>
+              <td>
+                <details class="items-details">
+                  <summary class="items-summary">
+                    {{ t('orders.itemsCount', { count: po.items.length }) }}
+                  </summary>
+                  <div class="items-dropdown po-dropdown">
+                    <div v-for="item in po.items" :key="item.sku" class="item-entry">
+                      <span class="item-name">{{ item.sku }} - {{ item.name }}</span>
+                      <span class="item-meta">
+                        {{ t('orders.submittedTable.quantity') }}: {{ item.quantity }}
+                        @ {{ formatMoney(item.unit_cost) }}
+                        = {{ formatMoney(item.line_total) }}
+                      </span>
+                      <span class="item-meta">{{ t('orders.submittedTable.supplier') }}: {{ item.supplier }}</span>
+                    </div>
+                  </div>
+                </details>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -83,6 +137,7 @@ import { ref, onMounted, watch, computed } from 'vue'
 import { api } from '../api'
 import { useFilters } from '../composables/useFilters'
 import { useI18n } from '../composables/useI18n'
+import { formatCurrency } from '../utils/currency'
 
 export default {
   name: 'Orders',
@@ -95,6 +150,26 @@ export default {
     const loading = ref(true)
     const error = ref(null)
     const orders = ref([])
+
+    // Restocking purchase orders are independent of the customer-order filters
+    const purchaseOrders = ref([])
+    const poLoading = ref(true)
+    const poError = ref(null)
+
+    const formatMoney = (amount) => formatCurrency(amount, currentCurrency.value)
+
+    const loadPurchaseOrders = async () => {
+      try {
+        poLoading.value = true
+        poError.value = null
+        purchaseOrders.value = await api.getPurchaseOrders()
+      } catch (err) {
+        poError.value = 'Failed to load submitted orders: ' + err.message
+        console.error('Failed to load purchase orders:', err)
+      } finally {
+        poLoading.value = false
+      }
+    }
 
     // Use shared filters
     const {
@@ -153,13 +228,20 @@ export default {
       })
     }
 
-    onMounted(loadOrders)
+    onMounted(() => {
+      loadOrders()
+      loadPurchaseOrders()
+    })
 
     return {
       t,
       loading,
       error,
       orders,
+      purchaseOrders,
+      poLoading,
+      poError,
+      formatMoney,
       getOrdersByStatus,
       getOrderStatusClass,
       formatDate,
@@ -275,5 +357,18 @@ export default {
 .item-meta {
   font-size: 0.813rem;
   color: #64748b;
+}
+.submitted-orders {
+  margin-top: 1.5rem;
+}
+
+.po-empty {
+  padding: 2rem;
+  text-align: center;
+  color: #64748b;
+}
+
+.po-dropdown {
+  min-width: 340px;
 }
 </style>
